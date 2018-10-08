@@ -65,6 +65,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Designer\UmlGeneralizationControl..xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Designer\UmlInterfaceControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -93,8 +97,12 @@
     <Compile Include="Controls\Designer\UmlConnectorControl.xaml.cs">
       <DependentUpon>UmlConnectorControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Designer\UmlConnectorHandler.cs" />
     <Compile Include="Controls\Designer\UmlDesignerCanvas.cs" />
     <Compile Include="Abilities\UserControlAbility.cs" />
+    <Compile Include="Controls\Designer\UmlGeneralizationControl..xaml.cs">
+      <DependentUpon>UmlGeneralizationControl..xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Designer\UmlInterfaceControl.xaml.cs">
       <DependentUpon>UmlInterfaceControl.xaml</DependentUpon>
     </Compile>

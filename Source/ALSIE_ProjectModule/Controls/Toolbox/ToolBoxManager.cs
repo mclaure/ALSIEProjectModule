@@ -11,8 +11,4 @@
         Association,
         Dependency
     }
-
-    public class ToolBoxManager
-    {   
-    }
 }

@@ -1,5 +1,6 @@
 ﻿using ALSIE_ProjectModule.Controls.Toolbox;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,26 +11,65 @@ namespace ALSIE_ProjectModule.Controls.Designer
     public partial class UmlDesignerCanvas : Canvas
     {
         #region UmlDesignerCanvas
-        public ToolBoxItem currentToolBoxItem;
+        private ToolBoxItem currentToolBoxItem;
+        private List<UmlConnectorHandler> umlConnectorHandlers;
+        private Point initialMousePosition;
+
         public UmlDesignerCanvas()
         {
             this.Background = Brushes.GhostWhite;
             this.Cursor = Cursors.Cross;
             this.currentToolBoxItem = ToolBoxItem.Undefined;
 
+            this.umlConnectorHandlers = new List<UmlConnectorHandler>();
+
             MouseLeftButtonDown += (sender, eventArgs) =>
             {
-                Point mousePosition = eventArgs.GetPosition(this);
+                this.initialMousePosition = eventArgs.GetPosition(this);
+                
                 switch(this.currentToolBoxItem)
                 {
-                    case ToolBoxItem.Class: this.AddUmlClassControl(mousePosition); break;
-                    case ToolBoxItem.Interface: this.AddUmlInterfaceControl(mousePosition); break;
-                    default: this.DisplayAlertMessage(); break;
+                    case ToolBoxItem.Class: {
+                            this.AddUmlClassControl();
+                        }; break;
+                    case ToolBoxItem.Interface: {
+                            this.AddUmlInterfaceControl();
+                        }; break;
+                    case ToolBoxItem.Generalization:
+                        {
+                        }; break;
+                    default: this.DisplayAlertMessage("You have to select a ToolBoxItem first!"); break;
                 }
             };
 
             MouseUp += (sender, eventArgs) =>
             {
+                Point mousePosition = eventArgs.GetPosition(this);
+                switch (this.currentToolBoxItem)
+                {
+                    case ToolBoxItem.Generalization:
+                        {
+                            this.AddUmlGeneralizationControl(mousePosition);
+                        }; break;
+                    case ToolBoxItem.Composition:
+                        {
+                            this.DisplayAlertMessage("To be implemented!");
+                        }; break;
+                    case ToolBoxItem.Aggregation:
+                        {
+                            this.DisplayAlertMessage("To be implemented!");
+                        }; break;
+                    case ToolBoxItem.Association:
+                        {
+                            this.DisplayAlertMessage("To be implemented!");
+                        }; break;
+                    case ToolBoxItem.Dependency:
+                        {
+                            this.DisplayAlertMessage("To be implemented!");
+                        }; break;
+                    default: { } break;
+                }
+
                 this.InvalidateMeasure();
             };
         }
@@ -37,22 +77,96 @@ namespace ALSIE_ProjectModule.Controls.Designer
         public void UpdateCurrentToolBoxItem(ToolBoxItem toolBoxItem)
         {
             this.currentToolBoxItem = toolBoxItem;
+
+            this.UpdateUmlConnectors();
+        }
+        
+        private void UpdateUmlConnectors()
+        {
+            switch (this.currentToolBoxItem)
+            {
+                case ToolBoxItem.Class:
+                    {
+                        this.HideUmlConnectors();
+                    }; break;
+                case ToolBoxItem.Interface:
+                    {
+                        this.HideUmlConnectors();
+                    }; break;
+                case ToolBoxItem.Generalization:
+                    {
+                        this.ShowUmlConnectors();
+                    }; break;
+                case ToolBoxItem.Composition:
+                    {
+                        this.ShowUmlConnectors();
+                    }; break;
+                case ToolBoxItem.Aggregation:
+                    {
+                        this.ShowUmlConnectors();
+                    }; break;
+                case ToolBoxItem.Association:
+                    {
+                        this.ShowUmlConnectors();
+                    }; break;
+                case ToolBoxItem.Dependency:
+                    {
+                        this.ShowUmlConnectors();
+                    }; break;
+                default: this.HideUmlConnectors(); break;
+            }
         }
 
-        private void AddUmlInterfaceControl(Point mousePosition)
+        private void ShowUmlConnectors()
+        {
+            foreach (UmlConnectorHandler handler in this.umlConnectorHandlers)
+            {
+                handler.ShowUmlConnectors();
+            }
+        }
+
+        private void HideUmlConnectors()
+        {
+            foreach (UmlConnectorHandler handler in this.umlConnectorHandlers)
+            {
+                handler.HideUmlConnectors();
+            }
+        }
+
+        private void AddUmlGeneralizationControl(Point endPoint)
+        {
+            Point startPoint = this.initialMousePosition;
+            double yDiff = endPoint.Y - startPoint.Y;
+            double xDiff = endPoint.X - startPoint.X;
+            double longitude = Math.Sqrt(Math.Pow(yDiff, 2) + Math.Pow(xDiff, 2));
+            double angle = Math.Atan2(yDiff, xDiff) * 180.0 / Math.PI;
+            
+            UmlGeneralizationControl umlGeneralizationControl = new UmlGeneralizationControl();
+            umlGeneralizationControl.SetLongitude(longitude);
+            umlGeneralizationControl.RenderTransform = new RotateTransform(0, 10, longitude);
+            ((RotateTransform)umlGeneralizationControl.RenderTransform).Angle = (90 + 360 + angle);
+            
+            this.AddUserControl(umlGeneralizationControl, new Point(startPoint.X - 10, startPoint.Y - longitude));
+        }
+
+        private void AddUmlInterfaceControl()
         {
             UmlInterfaceControl umlInterfaceControl = new UmlInterfaceControl();
-            this.AddUserControl(umlInterfaceControl, mousePosition);
+            this.AddUserControl(umlInterfaceControl, this.initialMousePosition);
             umlInterfaceControl.Focus();
             umlInterfaceControl.GetFocus();
+
+            this.umlConnectorHandlers.Add(umlInterfaceControl);
         }
 
-        private void AddUmlClassControl(Point mousePosition)
+        private void AddUmlClassControl()
         {
             UmlClassControl umlClassControl = new UmlClassControl();
-            this.AddUserControl(umlClassControl, mousePosition);
+            this.AddUserControl(umlClassControl, this.initialMousePosition);
             umlClassControl.Focus();
             umlClassControl.GetFocus();
+
+            this.umlConnectorHandlers.Add(umlClassControl);
         }
 
         private void AddUserControl(UserControl userControl, Point position)
@@ -62,10 +176,9 @@ namespace ALSIE_ProjectModule.Controls.Designer
             this.Children.Add(userControl);
         }
         
-        private void DisplayAlertMessage()
+        private void DisplayAlertMessage(string message)
         {
             string applicationName = "UML Class Diagrammer";
-            string message = "You have to select a ToolBoxItem first!";
             MessageBox.Show(message, applicationName);
         }
         #endregion

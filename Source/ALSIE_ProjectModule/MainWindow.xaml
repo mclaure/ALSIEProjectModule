@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:ALSIE_ProjectModule"
         xmlns:tc="clr-namespace:ALSIE_ProjectModule.Controls.Toolbox"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="750">
+        Title="UML Diagram Designer"
+        WindowState="Maximized">
     <Grid Background="AliceBlue">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250"/>

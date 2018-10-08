@@ -9,8 +9,9 @@ namespace ALSIE_ProjectModule.Controls.Designer
     /// <summary>
     /// Interaction logic for UmlClassControl.xaml
     /// </summary>
-    public partial class UmlClassControl : UserControl
+    public partial class UmlClassControl : UserControl, UmlConnectorHandler
     {
+        #region UserControl
         private UserControlAbilityInjector abilityInjector;
 
         public UmlClassControl() : base()
@@ -37,6 +38,22 @@ namespace ALSIE_ProjectModule.Controls.Designer
             }
         }
 
+        public void GetFocus()
+        {
+            classNameTextBox.Focusable = true;
+            Task.Delay(100).ContinueWith(_ =>
+            {
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
+                    classNameTextBox.Focus();
+                }));
+            });
+            classNameTextBox.SelectAll();
+        }
+        #endregion
+
+
+        #region UmlConnectorHandler
         public void ShowUmlConnectors()
         {
             TopConnector.Visibility = Visibility.Visible;
@@ -52,18 +69,6 @@ namespace ALSIE_ProjectModule.Controls.Designer
             LeftConnector.Visibility = Visibility.Hidden;
             RightConnector.Visibility = Visibility.Hidden;
         }
-
-        public void GetFocus()
-        {
-            classNameTextBox.Focusable = true;
-            Task.Delay(100).ContinueWith(_ =>
-            {
-                Application.Current.Dispatcher.Invoke(new Action(() =>
-                {
-                    classNameTextBox.Focus();
-                }));
-            });
-            classNameTextBox.SelectAll();
-        }
+        #endregion
     }
 }
