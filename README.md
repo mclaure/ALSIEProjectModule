@@ -17,3 +17,8 @@ Basic Functionality
 TODO
 ----
 1. Linkeability of the classes/Interfaces
+
+Team Members
+------------
+1. Claure, Marcelo
+2. Dominguez, Boris
